@@ -33,6 +33,8 @@ class SetupTestSuite(unittest.TestSuite):
         parser.add_argument('-f', '--failfast', dest='failfast',
                 action='store_const', const=True, default=False,)
         parser.add_argument('-l', '--label', dest='label')
+        parser.add_argument('-c', '--config', dest='config',
+                            action='store', default='setup.cfg')
         self.options = vars(parser.parse_args(sys.argv[2:]))
         sys.argv = sys.argv[:2]
 
@@ -222,7 +224,8 @@ class SetupTestSuite(unittest.TestSuite):
             sys.stdout = mystdout = StringIO()
 
             # Run Pep8 checks, excluding South migrations.
-            pep8_style = pep8.StyleGuide()
+            config_file = self.options['config']
+            pep8_style = pep8.StyleGuide(config_file=config_file)
             pep8_style.options.exclude.append('migrations')
             pep8_style.options.exclude.append('south_migrations')
             pep8_style.check_files(self.packages)
